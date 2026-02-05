@@ -110,60 +110,40 @@
       <button type="submit">Submit RSVP</button>
     </form>
 
-    <h2>RSVP List</h2>
-    <table id="rsvpTable">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Attending</th>
-          <th>Total Guests</th>
-          <th>Guest Names</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <button class="download-btn" onclick="downloadCSV()">Download as Excel (CSV)</button>
+    <h2 style="display:none" id="listTitle">RSVP List</h2>
+    
   </div>
 
   <script>
-    const form = document.getElementById('rsvpForm');
-    const tableBody = document.querySelector('#rsvpTable tbody');
-    let rsvpData = [];
+  // Google Apps Script URL (auto-save to Google Sheets)
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFfutBZ5y4fDD6wY5rXkDvaG0BlypNktUFKSjQ-BGQ/dev";
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const name = document.getElementById('name').value;
-      const coming = document.getElementById('coming').value;
-      const guestCount = document.getElementById('guestCount').value;
-      const guestNames = document.getElementById('guestNames').value;
+  const form = document.getElementById("rsvpForm");
 
-      const entry = { name, coming, guestCount, guestNames };
-      rsvpData.push(entry);
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-      const row = document.createElement('tr');
-      row.innerHTML = `<td>${name}</td><td>${coming}</td><td>${guestCount}</td><td>${guestNames}</td>`;
-      tableBody.appendChild(row);
+    const data = {
+      name: document.getElementById("name").value,
+      coming: document.getElementById("coming").value,
+      guestCount: document.getElementById("guestCount").value,
+      guestNames: document.getElementById("guestNames").value
+    };
 
-      form.reset();
-    });
-
-    function downloadCSV() {
-      let csv = 'Name,Attending,Total Guests,Guest Names\n';
-      rsvpData.forEach(r => {
-        csv += `${r.name},${r.coming},${r.guestCount},"${r.guestNames}"\n`;
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
       });
 
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = https://script.google.com/macros/s/AKfycbxwGSrTruhIQUJQE6tzJ2YJKsDQfVyXkspx1omGaTtEgdxaCfUQgO5i7kRkUSpu4oKNLQ/exec;
-      const a = document.createElement('a');
-      a.setAttribute('hidden', '');
-      a.setAttribute('href', url);
-      a.setAttribute('download', 'RSVP_List.csv');
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      alert("Thank you! Your RSVP has been successfully recorded.");
+      form.reset();
+
+    } catch (error) {
+      alert("Something went wrong. Please try again later.");
     }
-  </script>
+  });
+</script>
 </body>
 </html>
