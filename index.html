@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Karan & Raveena – Reception RSVP</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #faf7f2;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 20px auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+      color: #5a3e2b;
+    }
+    .invite {
+      text-align: center;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 16px;
+      padding: 12px;
+      width: 100%;
+      background: #c89b3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #b1872f;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f2eee9;
+    }
+    .download-btn {
+      background: #4caf50;
+      margin-top: 10px;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Karan & Raveena</h1>
+    <div class="invite">
+      <p>With love and joy, the Gehlot family cordially invites you to the Wedding Reception.</p>
+      <p><strong>🗓 When:</strong> 25th Feb 2026<br />
+         <strong>⏰ Time:</strong> 7:15 PM onwards<br />
+         <strong>📍 Where:</strong> Shahanshah Palace, Ferozpur Road, Ludhiana<br />
+         <strong>📍 Map:</strong> <a href="https://maps.app.goo.gl/9Vq1tuortj1Zmqsd7" target="_blank">Open Map</a></p>
+      <p><strong>Please RSVP by 4th February</strong></p>
+    </div>
+
+    <h2>RSVP Form</h2>
+    <form id="rsvpForm">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" required />
+
+      <label for="coming">Will you attend?</label>
+      <select id="coming" required>
+        <option value="Yes">Yes, I will attend</option>
+        <option value="No">Sorry, I can't attend</option>
+      </select>
+
+      <label for="guestCount">Total Number of Guests (including you)</label>
+      <input type="number" id="guestCount" min="1" value="1" />
+
+      <label for="guestNames">Guest Names (comma separated)</label>
+      <input type="text" id="guestNames" placeholder="e.g. Anjali, Rohit" />
+
+      <button type="submit">Submit RSVP</button>
+    </form>
+
+    <h2>RSVP List</h2>
+    <table id="rsvpTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Attending</th>
+          <th>Total Guests</th>
+          <th>Guest Names</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button class="download-btn" onclick="downloadCSV()">Download as Excel (CSV)</button>
+  </div>
+
+  <script>
+    const form = document.getElementById('rsvpForm');
+    const tableBody = document.querySelector('#rsvpTable tbody');
+    let rsvpData = [];
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const coming = document.getElementById('coming').value;
+      const guestCount = document.getElementById('guestCount').value;
+      const guestNames = document.getElementById('guestNames').value;
+
+      const entry = { name, coming, guestCount, guestNames };
+      rsvpData.push(entry);
+
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${name}</td><td>${coming}</td><td>${guestCount}</td><td>${guestNames}</td>`;
+      tableBody.appendChild(row);
+
+      form.reset();
+    });
+
+    function downloadCSV() {
+      let csv = 'Name,Attending,Total Guests,Guest Names\n';
+      rsvpData.forEach(r => {
+        csv += `${r.name},${r.coming},${r.guestCount},"${r.guestNames}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('hidden', '');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'RSVP_List.csv');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  </script>
+</body>
+</html>
